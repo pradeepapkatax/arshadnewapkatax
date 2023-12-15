@@ -1,18 +1,17 @@
 import { NextResponse } from 'next/server'
-import  { NextRequest } from 'next/server'
 
-import { i18n } from './i18n-config'
+import { i18n } from '../i18n-config'
 
 import { match as matchLocale } from '@formatjs/intl-localematcher'
 import Negotiator from 'negotiator'
 
-function getLocale(){
+function getLocale(request) {
   // Negotiator expects plain object so we need to transform headers
   const negotiatorHeaders = {}
   request.headers.forEach((value, key) => (negotiatorHeaders[key] = value))
 
   // @ts-ignore locales are readonly
-  const locales= i18n.locales
+  const locales = i18n.locales
 
   // Use negotiator and intl-localematcher to get best locale
   let languages = new Negotiator({ headers: negotiatorHeaders }).languages(
@@ -24,7 +23,7 @@ function getLocale(){
   return locale
 }
 
-export function middleware() {
+export function middleware(request) {
   const pathname = request.nextUrl.pathname
 
   // // `/_next/` and `/api/` are ignored by the watcher, but we need to ignore files in `public` manually.
